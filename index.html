@@ -7,11 +7,32 @@
     <link rel="stylesheet" href="app.css">
 </head>
 <body>
-    <canvas id="ballsCanvas">
+    <canvas id="ballsCanvas"></canvas>
+
+    <div id="game-ui">
+        <div id="start-screen">
+            <h1>Canvas Shapes Game</h1>
+            <p>A game for learning mouse interaction.</p>
+            <h2>Choose a Mode:</h2>
+            <button id="start-explode-mode">Explode Mode</button>
+            <button id="start-add-mode">Add Mode</button>
+        </div>
+
+        <div id="game-over-screen" class="hidden">
+            <h2 id="game-over-message">You Win!</h2>
+            <button id="play-again">Play Again?</button>
+        </div>
         
-    </canvas>
-    <button id="clear">Clear</button>
-        <button id="ballToggle">Mode</button>
+        <div id="in-game-controls" class="hidden">
+            <button id="clear">Clear</button>
+            <button id="ballToggle">Mode: Explode</button>
+        </div>
+
+        <div id="add-mode-counter" class="hidden">
+            Shapes: 0 / 20
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>
