@@ -24,8 +24,18 @@
         </div>
         
         <div id="in-game-controls" class="hidden">
-            <button id="clear">Clear</button>
-            <button id="ballToggle">Mode: Explode</button>
+            <div class="controls-container">
+                <button id="clear">Clear</button>
+                <button id="ballToggle">Mode: Explode</button>
+            </div>
+            <div class="slider-container">
+                <label for="gravity-slider">Gravity</label>
+                <input type="range" id="gravity-slider" min="0" max="1" step="0.01" value="0.05">
+            </div>
+            <div class="slider-container">
+                <label for="size-slider">Shape Size</label>
+                <input type="range" id="size-slider" min="10" max="100" step="1" value="40">
+            </div>
         </div>
 
         <div id="add-mode-counter" class="hidden">

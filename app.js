@@ -12,19 +12,23 @@ const playAgainBtn = document.querySelector("#play-again");
 const clearBtn = document.querySelector("#clear");
 const modeBtn = document.querySelector("#ballToggle");
 const gameOverMessage = document.querySelector("#game-over-message");
+const gravitySlider = document.querySelector("#gravity-slider");
+const sizeSlider = document.querySelector("#size-slider");
 
 // Game State
 let gameState = 'initial'; // initial, playing, gameOver
 let mode = 'explode'; // explode, add
 const ADD_MODE_GOAL = 200;
 let animationFrameId;
+let gravity = 0.05;
+let shapeSize = 40;
 
 const balls = [];
 const squares = [];
 const triangles = [];
 const particles = [];
 
-// Shape Classes (Ball, Square, Triangle, Particle)
+// Shape Classes
 class Ball {
     constructor(x,y) {
         this.id = 'ball-' + Math.random();
@@ -33,7 +37,7 @@ class Ball {
         this.xVelocity = (Math.random() - 0.5) * 10;
         this.yVelocity = (Math.random() - 0.5) * 10;
         this.color = Ball.getRandomColor();
-        this.size = Math.random() * 30 + 25;
+        this.size = shapeSize + (Math.random() * 15 - 7.5);
         this.rotation = 0;
         this.rotationSpeed = 0;
     }
@@ -61,7 +65,7 @@ class Square {
         this.xVelocity = (Math.random() - 0.5) * 10;
         this.yVelocity = (Math.random() - 0.5) * 10;
         this.color = Square.getRandomColor();
-        this.size = Math.random() * 30 + 25;
+        this.size = shapeSize + (Math.random() * 15 - 7.5);
         this.rotation = 0;
         this.rotationSpeed = 0;
     }
@@ -94,7 +98,7 @@ class Triangle {
         this.xVelocity = (Math.random() - 0.5) * 10;
         this.yVelocity = (Math.random() - 0.5) * 10;
         this.color = Triangle.getRandomColor();
-        this.size = Math.random() * 30 + 25;
+        this.size = shapeSize + (Math.random() * 15 - 7.5);
         this.rotation = 0;
         this.rotationSpeed = 0;
     }
@@ -247,6 +251,8 @@ startExplodeModeBtn.addEventListener('click', () => startGame('explode'));
 startAddModeBtn.addEventListener('click', () => startGame('add'));
 playAgainBtn.addEventListener('click', init);
 clearBtn.addEventListener('click', clearCanvas);
+gravitySlider.addEventListener('input', (e) => gravity = parseFloat(e.target.value));
+sizeSlider.addEventListener('input', (e) => shapeSize = parseFloat(e.target.value));
 
 canvas.addEventListener('click', function (e) {
     if (gameState !== 'playing') return;
@@ -339,15 +345,23 @@ function rotate(velocity, angle) {
 }
 
 function globalUpdate(shape) {
+    // Boundary checks
     if ((shape.x + shape.size) >= canvas.width || (shape.x - shape.size) <= 0) {
         shape.xVelocity = -shape.xVelocity;
     }
     if ((shape.y + shape.size) >= canvas.height || (shape.y - shape.size) <= 0) {
-        shape.yVelocity = -shape.yVelocity;
+        shape.yVelocity = -shape.yVelocity * 0.95; // Less energy loss on bounce
     }
+
+    // Apply gravity
     if ((shape.y + shape.size) < canvas.height) {
-        shape.yVelocity += 0.05;
+        shape.yVelocity += gravity;
     }
+
+    // Apply a very slight vertical drag to make the gravity slider responsive
+    shape.yVelocity *= 0.999;
+
+    // Update position
     shape.x += shape.xVelocity;
     shape.y += shape.yVelocity;
     shape.rotation += shape.rotationSpeed;
