@@ -1,6 +1,6 @@
 # Canvas Shapes Game
 
-A simple and fun browser-based game designed for young children to learn mouse interaction. Colorful shapes bounce around the screen, and the player can interact with them in two different modes.
+This is a simple and fun browser-based game created for young children to learn mouse interaction. Colorful shapes bounce around the screen, and the player can interact with them in two different modes.
 
 ## How to Play
 
@@ -14,8 +14,8 @@ Simply open the `index.html` file in a web browser.
 
 ## Features
 
-- A clear start screen and game-over/win screen.
-- Two distinct game modes: "Explode" and "Add".
+- Start screen and game-over/win screen.
+- Game modes: "Explode" and "Add".
 - A counter for "Add Mode" to track progress towards the goal.
 - Interactive shapes that collide with each other and the screen boundaries.
 - A simple gravity effect.
