@@ -212,10 +212,39 @@ function isPointInsideShape(x, y, shape) {
     return distance <= shape.size; // Checks if the click is within the shape's area
 }
 
+let mode = 'explode'; // Modes: 'explode', 'add'
+
+const clearButton = document.querySelector("#clear");
+const modeButton = document.querySelector("#ballToggle");
+
+clearButton.addEventListener('click', () => {
+    balls.length = 0;
+    squares.length = 0;
+    triangles.length = 0;
+    particles.length = 0;
+});
+
+modeButton.addEventListener('click', () => {
+    mode = mode === 'explode' ? 'add' : 'explode';
+    modeButton.textContent = mode === 'explode' ? 'Mode: Explode' : 'Mode: Add';
+});
+
 canvas.addEventListener('click', function (e) {
     const clickX = e.clientX;
     const clickY = e.clientY;
-    removeShapeIfClicked(clickX, clickY);
+
+    if (mode === 'explode') {
+        removeShapeIfClicked(clickX, clickY);
+    } else if (mode === 'add') {
+        const shapeType = Math.floor(Math.random() * 3);
+        if (shapeType === 0) {
+            balls.push(new Ball(clickX, clickY));
+        } else if (shapeType === 1) {
+            squares.push(new Square(clickX, clickY));
+        } else {
+            triangles.push(new Triangle(clickX, clickY));
+        }
+    }
 });
 
 function removeShapeIfClicked(x, y) {
@@ -296,40 +325,21 @@ function loop() {
     requestAnimationFrame(loop);
 }
 
-
-// function loop() {
-//     ctx.fillStyle = "#f2f2f2";
-//     // ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // let allShapes = [...balls, ...squares, ...triangles];
-    // for (let i = 0; i < allShapes.length; i++) {
-    //     for (let j = i + 1; j < allShapes.length; j++) {
-    //         handleCollision(allShapes[i], allShapes[j]);
-    //     }
-    // }
-
-//     allShapes.forEach(shape => {
-//         globalUpdate(shape);
-//         shape.draw();
-//     });
-
-//     requestAnimationFrame(loop);
-// }
-
 loop();
 
 function addShapes(num) {
     for (let i = 0; i < num; i++) {
-        balls.push(new Ball(Math.random() * canvas.width, Math.random() * canvas.height));
-        squares.push(new Square(Math.random() * canvas.width, Math.random() * canvas.height));
-        triangles.push(new Triangle(Math.random() * canvas.width, Math.random() * canvas.height));
+        const shapeType = Math.floor(Math.random() * 3);
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        if (shapeType === 0) {
+            balls.push(new Ball(x, y));
+        } else if (shapeType === 1) {
+            squares.push(new Square(x, y));
+        } else {
+            triangles.push(new Triangle(x, y));
+        }
     }
 }
 
 addShapes(10);
-
-// canvas.addEventListener('click', (e) => {
-//     balls.push(new Ball(e.clientX, e.clientY));
-//     squares.push(new Square(e.clientX, e.clientY));
-//     triangles.push(new Triangle(e.clientX, e.clientY));
-// });
