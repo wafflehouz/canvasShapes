@@ -16,14 +16,15 @@ const gameOverMessage = document.querySelector("#game-over-message");
 // Game State
 let gameState = 'initial'; // initial, playing, gameOver
 let mode = 'explode'; // explode, add
-const ADD_MODE_GOAL = 20;
+const ADD_MODE_GOAL = 200;
+let animationFrameId;
 
 const balls = [];
 const squares = [];
 const triangles = [];
 const particles = [];
 
-// Shape Classes (Ball, Square, Triangle, Particle) - (Content is the same as before, so it's omitted for brevity)
+// Shape Classes (Ball, Square, Triangle, Particle)
 class Ball {
     constructor(x,y) {
         this.id = 'ball-' + Math.random();
@@ -32,10 +33,9 @@ class Ball {
         this.xVelocity = (Math.random() - 0.5) * 10;
         this.yVelocity = (Math.random() - 0.5) * 10;
         this.color = Ball.getRandomColor();
-        this.borderColor = Ball.getRandomColor();
         this.size = Math.random() * 30 + 25;
         this.rotation = 0;
-        this.rotationSpeed = 0; // Speed in radians per frame
+        this.rotationSpeed = 0;
     }
 
     static getRandomColor() {
@@ -48,7 +48,6 @@ class Ball {
     draw() {
         ctx.beginPath();
         ctx.fillStyle = this.color;
-        ctx.lineWidth = 2;
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
     }
@@ -62,10 +61,9 @@ class Square {
         this.xVelocity = (Math.random() - 0.5) * 10;
         this.yVelocity = (Math.random() - 0.5) * 10;
         this.color = Square.getRandomColor();
-        this.borderColor = Square.getRandomColor();
         this.size = Math.random() * 30 + 25;
         this.rotation = 0;
-        this.rotationSpeed = 0; // Speed in radians per frame
+        this.rotationSpeed = 0;
     }
 
     static getRandomColor() {
@@ -96,7 +94,6 @@ class Triangle {
         this.xVelocity = (Math.random() - 0.5) * 10;
         this.yVelocity = (Math.random() - 0.5) * 10;
         this.color = Triangle.getRandomColor();
-        this.borderColor = Triangle.getRandomColor();
         this.size = Math.random() * 30 + 25;
         this.rotation = 0;
         this.rotationSpeed = 0;
@@ -153,9 +150,9 @@ class Particle {
     }
 }
 
-
 // Game Logic
 function init() {
+    cancelAnimationFrame(animationFrameId);
     gameState = 'initial';
     startScreen.classList.remove('hidden');
     gameOverScreen.classList.add('hidden');
@@ -174,11 +171,13 @@ function startGame(selectedMode) {
 
     if (mode === 'add') {
         addModeCounter.classList.remove('hidden');
-        modeBtn.disabled = true; // Disable mode switching mid-game
+        clearBtn.classList.remove('hidden');
+        modeBtn.disabled = true;
         modeBtn.textContent = "Mode: Add";
-        clearCanvas(); // Start with a blank canvas
+        clearCanvas();
     } else {
         addModeCounter.classList.add('hidden');
+        clearBtn.classList.add('hidden');
         modeBtn.disabled = true;
         modeBtn.textContent = "Mode: Explode";
         addShapes(10);
@@ -187,6 +186,7 @@ function startGame(selectedMode) {
 }
 
 function endGame(message) {
+    cancelAnimationFrame(animationFrameId);
     gameState = 'gameOver';
     gameOverMessage.textContent = message;
     gameOverScreen.classList.remove('hidden');
@@ -209,7 +209,6 @@ function loop() {
     
     let allShapes = [...balls, ...squares, ...triangles];
 
-    // Collision and updates
     for (let i = 0; i < allShapes.length; i++) {
         for (let j = i + 1; j < allShapes.length; j++) {
             handleCollision(allShapes[i], allShapes[j]);
@@ -221,7 +220,6 @@ function loop() {
         shape.draw();
     });
 
-    // Particles
     particles.forEach((particle, index) => {
         if (particle.isAlive()) {
             particle.update();
@@ -231,7 +229,6 @@ function loop() {
         }
     });
 
-    // Win Conditions
     if (mode === 'explode' && allShapes.length === 0 && particles.length === 0) {
         endGame('You Win!');
     } else if (mode === 'add') {
@@ -242,7 +239,7 @@ function loop() {
         }
     }
 
-    requestAnimationFrame(loop);
+    animationFrameId = requestAnimationFrame(loop);
 }
 
 // Event Listeners
@@ -268,7 +265,6 @@ canvas.addEventListener('click', function (e) {
 
 window.addEventListener('resize', resizeCanvas);
 
-// Utility Functions (handleCollision, globalUpdate, etc. - content is the same as before)
 function removeShapeIfClicked(x, y) {
     [balls, squares, triangles].forEach((shapeArray) => {
         for (let i = shapeArray.length - 1; i >= 0; i--) {
