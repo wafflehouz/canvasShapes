@@ -176,13 +176,13 @@ function startGame(selectedMode) {
         addModeCounter.classList.remove('hidden');
         modeBtn.disabled = true; // Disable mode switching mid-game
         modeBtn.textContent = "Mode: Add";
+        clearCanvas(); // Start with a blank canvas
     } else {
         addModeCounter.classList.add('hidden');
         modeBtn.disabled = true;
         modeBtn.textContent = "Mode: Explode";
+        addShapes(10);
     }
-
-    addShapes(10);
     loop();
 }
 
